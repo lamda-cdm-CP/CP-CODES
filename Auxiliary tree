@@ -106,6 +106,9 @@ ll lca(ll a,ll b){
     }
     return jump[a][0];
 }
+bool anc(ll a,ll b){
+    return in[a]<=in[b] and out[a]>=out[b];
+}
 void solve() {
     int n;cin>>n;
     adj.resize(n+1);in.resize(n+1);out.resize(n+1);
@@ -124,10 +127,23 @@ void solve() {
         f(i,1,nodes.size()){
             final_nodes.insert(lca(nodes[i],nodes[i-1]));
         }
-        it(final_nodes){
-            cout<<it<<" ";
+        vector<ll>sorted_acc_in_time(final_nodes.begin(),final_nodes.end());
+        sort(sorted_acc_in_time.begin(),sorted_acc_in_time.end(),mycmp);
+        // we have recieved the final nodes
+        stack<ll>s;s.push(sorted_acc_in_time[0]);
+        vector<vll>edges;
+        f(i,1,sorted_acc_in_time.size()){
+            auto it = sorted_acc_in_time[i];
+            while(not anc(s.top(),it)){
+                // checking if s.top is the ancestor of it or not
+                s.pop();
+            }
+            edges.pb({s.top(), it});s.push(it);
         }
-        cout<<endl;
+        //edges finally
+        it(edges){
+            cout<<it[0]<<" "<<it[1]<<endl;
+        }
     }
 }
 int main() {
